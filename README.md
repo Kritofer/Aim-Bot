@@ -10,4 +10,4 @@ local Config = {
 	Fov = 200,
 	Color = Color3.fromRGB(120,0,200)
 }
-Loadstring(game:HttpGet('https://github.com/Kritofer/Aim-Bot/new/main/main_file'))
+Loadstring(game:HttpGet('https://raw.githubusercontent.com/Kritofer/Aim-Bot/main/main_code.lua)))
