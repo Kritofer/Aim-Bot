@@ -10,4 +10,4 @@ the code for roblox is
 		Fov = 200,
 		Color = Color3.fromRGB(120,0,200)
 	}
-	Loadstring(game:HttpGet('https://raw.githubusercontent.com/Kritofer/Aim-Bot/main/main_code.lua)))
+	Loadstring(game:HttpGet('https://raw.githubusercontent.com/Kritofer/Aim-Bot/main/main_code.lua)))()
