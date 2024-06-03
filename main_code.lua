@@ -11,7 +11,7 @@ local CanAim = false
 local fov = Config.Fov or 100
 local CLR = Config.Color or Color3.new(1,1,1)
 local shooting = {}
-local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false print(CanAim) end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true print(CanAim) shootnearest() end end)end}
+local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
 functions[1]()
 
 RS.Heartbeat:Connect(function()
@@ -38,7 +38,6 @@ function shootnearest()
 			if player.Character.Humanoid.Health == 0 then continue end
 			local ray = Ray.new(Camera.CFrame.Position, (player.Character.Head.Position - Camera.CFrame.Position).Unit * 200)
 			local part = workspace:FindPartOnRayWithIgnoreList(ray, {Localplayer.Character})
-            print(not part.CanCollide)
 			if part and (part:IsDescendantOf(player.Character) or not part.CanCollide) then
 				shortest = distance
 			end
@@ -52,7 +51,7 @@ end
 function shoot(player: Player)
 	local lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position)
 	if Config.Advanced then
-		lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position + player.Character.HumanoidRootPart.Velocity)
+		lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position + (player.Character.HumanoidRootPart.Velocity * 0.1))
 	end
 	Camera.CFrame = lookto
 end
