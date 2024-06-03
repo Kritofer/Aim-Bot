@@ -54,7 +54,7 @@ function shoot(player: Player)
 	local lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position)
 	if Config.Advanced then
 		local distance = ((Localplayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position) / max).Magnitude
-		lookto = CFrame.lookAt(Camera.CFrame.Position + Localplayer.Character.HumanoidRootPart.Velocity * (0.1 + (Localplayer:GetNetworkPing() * 5)), player.Character.HumanoidRootPart.Position + (player.Character.HumanoidRootPart.Velocity * (0.25 + (Localplayer:GetNetworkPing() * (7 + ((distance * max - max) / max))))))
+		lookto = CFrame.lookAt(Camera.CFrame.Position + Localplayer.Character.HumanoidRootPart.Velocity * (0.1 + (Localplayer:GetNetworkPing() * 5)), player.Character.HumanoidRootPart.Position + (player.Character.HumanoidRootPart.Velocity * (0.20 + (Localplayer:GetNetworkPing() * (7 + ((distance * max - max) / max))))))
 	end
 	Camera.CFrame = lookto
 end
