@@ -10,6 +10,7 @@ local Camera = workspace.CurrentCamera
 local CanAim = false
 local fov = Config.Fov or 100
 local CLR = Config.Color or Color3.new(1,1,1)
+local max = Config.MaxDistance or 300
 local shooting = {}
 local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
 functions[1]()
@@ -26,6 +27,7 @@ function shootnearest()
 		if player == Localplayer then continue end
 		if player.Character and player.Character:FindFirstChild("Head") then
 			local distance = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(Camera:WorldToScreenPoint(player.Character.Head.Position).X, Camera:WorldToScreenPoint(player.Character.Head.Position).Y)).Magnitude
+			if (Localplayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude > max then continue end
 			shooting[distance] = player
 		end
 	end
@@ -52,7 +54,7 @@ function shoot(player: Player)
 	local lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position)
 	if Config.Advanced then
 		lookto = CFrame.lookAt(Camera.CFrame.Position + Localplayer.Character.HumanoidRootPart.Velocity * (0.1 + (Localplayer:GetNetworkPing() * 5)), player.Character.HumanoidRootPart.Position + (player.Character.HumanoidRootPart.Velocity * (0.25 + (Localplayer:GetNetworkPing() * 7))))
-		print("ping:", Localplayer:GetNetworkPing() * 7)
+		print("distance:", (player.Character.HumanoidRootPart.Position / max))
 	end
 	Camera.CFrame = lookto
 end
