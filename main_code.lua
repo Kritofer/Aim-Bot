@@ -52,6 +52,7 @@ function shoot(player: Player)
 	local lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position)
 	if Config.Advanced then
 		lookto = CFrame.lookAt(Camera.CFrame.Position + Localplayer.Character.HumanoidRootPart.Velocity * (0.30 + (Localplayer:GetNetworkPing() * 7)), player.Character.Head.Position + (player.Character.HumanoidRootPart.Velocity * (0.30 + (Localplayer:GetNetworkPing() * 7))))
+		print("ping:", Localplayer:GetNetworkPing() * 7)
 	end
 	Camera.CFrame = lookto
 end
