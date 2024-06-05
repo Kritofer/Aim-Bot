@@ -79,7 +79,6 @@ function esp(char: Model)
 	local gui = char:FindFirstChild("Esp-Decal") or Instance.new("BillboardGui")
 	for _, part in gui:GetChildren() do part:Destroy() end
 	gui.Parent = char:FindFirstChild("Head") or char:WaitForChild("Head")
-	-- esp's the player's head --
 	gui.Name = "Esp-Decal"
 	gui.Size = UDim2.new(1,0,1,0)
 	gui.AlwaysOnTop = true
@@ -118,7 +117,7 @@ function drawCircle(fov, color)
 	for i = 1, #points do
 		local p1 = points[i]
 		local line = Instance.new("Frame")
-		line.Size = UDim2.new(0, 2.5, 0, 2.5)
+		line.Size = UDim2.new(0, 3, 0, 3)
 		line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
 		line.BackgroundColor3 = color
 		line.BorderSizePixel = 0
@@ -134,7 +133,7 @@ function drawCircle(fov, color)
 		for i = 1, #points do
 			local p1 = points[i]
 			local line = Instance.new("Frame")
-			line.Size = UDim2.new(0, 2.5, 0, 2.5)
+			line.Size = UDim2.new(0, 3, 0, 3)
 			line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
 			line.BackgroundColor3 = color
 			line.BorderSizePixel = 0
