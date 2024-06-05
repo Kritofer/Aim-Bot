@@ -1,22 +1,34 @@
 local wait, spawn = task.wait, task.spawn
 
-print("Executing")
-
 local Localplayer = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
 local mouse = Localplayer:GetMouse()
 local Camera = workspace.CurrentCamera
 local CanAim = false
-local fov = Config.Fov or 100
-local CLR = Config.Color or Color3.new(1,1,1)
-local max = Config.MaxDistance or 300
+local fov = 100
+local CLR = Color3.new(1,1,1)
+local max = 300
 local shooting = {}
+local enabledaim = true
+local shootteam = false
+local advanced = false
+local fovoutline = true
+local screengui = nil
 local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
 functions[1]()
 
+if Localplayer.PlayerGui:FindFirstChild("ScreenGui") then
+	screengui = Localplayer.PlayerGui:FindFirstChild("ScreenGui")
+	screengui.Enabled = true
+else
+	screengui = Instance.new("ScreenGui", Localplayer.PlayerGui)
+	screengui.Name = "ScreenGui"
+	screengui.Enabled = true
+end
+
 RS.Heartbeat:Connect(function()
-	if CanAim and Config.Enabled then
+	if CanAim and enabledaim then
 		shootnearest()
 	end
 end)
@@ -27,7 +39,7 @@ function shootnearest()
 		if player == Localplayer then continue end
 		if player.Character and player.Character:FindFirstChild("Head") then
 			local distance = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(Camera:WorldToScreenPoint(player.Character.Head.Position).X, Camera:WorldToScreenPoint(player.Character.Head.Position).Y)).Magnitude
-			if (Localplayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude > max then continue end
+			if advanced then if ((Localplayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude > max) then continue end end
 			shooting[distance] = player
 		end
 	end
@@ -35,7 +47,7 @@ function shootnearest()
 	for distance, player in shooting do
 		local check = (player.Team ~= Localplayer.Team)
 		if player.Team == nil then check = true end
-		if Config.ShootTeam then check = true end 
+		if shootteam then check = true end 
 		if distance < shortest and check then
 			if player.Character.Humanoid.Health == 0 then continue end
 			local ray = Ray.new(Camera.CFrame.Position, (player.Character.Head.Position - Camera.CFrame.Position).Unit * 200)
@@ -52,13 +64,11 @@ end
 
 function shoot(player: Player)
 	local lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position)
-	if Config.Advanced then
-		local distance = ((Localplayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position) / max).Magnitude
-		local distance = ((distance * max - max) / max) / 2
-		local vel = (player.Character.HumanoidRootPart.Velocity * (0.20 + (Localplayer:GetNetworkPing() * (7 + distance))))
-		local vel = Vector3.new(vel.x, vel.y / 4, vel.z)
-		lookto = CFrame.lookAt(Camera.CFrame.Position + Localplayer.Character.HumanoidRootPart.Velocity * (0.1 + (Localplayer:GetNetworkPing() * 5)), player.Character.HumanoidRootPart.Position + vel)
-		print("distance:", distance)
+	if advanced then
+		local distance = ((Localplayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position) / (max * 1.2)).Magnitude / 2
+		local vel = (player.Character.HumanoidRootPart.Velocity * (0.20 + (Localplayer:GetNetworkPing() * (5 + distance))))
+		local vel = Vector3.new(vel.x, vel.y / 6, vel.z)
+		lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.HumanoidRootPart.Position + vel)
 	end
 	Camera.CFrame = lookto
 end
@@ -95,66 +105,247 @@ function drawCircle(fov, color)
 	local segments = fov*2
 	local increment = math.pi*2/segments
 	local points = {}
-	local screengui = Localplayer.PlayerGui:FindFirstChild("ScreenGui") or Instance.new("ScreenGui")
-	screengui.Parent = Localplayer.PlayerGui
 	for i = 0, math.pi*2, increment do
 		local x = math.cos(i)*radius
 		local y = math.sin(i)*radius
 		table.insert(points, Vector2.new(x,y))
 	end
 	for _, GuiItem in screengui:GetDescendants() do
-		if GuiItem:IsA("Frame") and GuiItem.Name == "AimBot-Decal" then
+		if GuiItem:IsA("Frame") and GuiItem.Name == "FovOutLine" then
 			GuiItem:Destroy()
 		end
 	end
 	for i = 1, #points do
 		local p1 = points[i]
 		local line = Instance.new("Frame")
-		line.Size = UDim2.new(0, 5, 0, 5)
-		line.Position = UDim2.new(0.5, p1.X, 0.4789, p1.Y)
-		line.AnchorPoint = Vector2.new(0.5, 0.4789)
+		line.Size = UDim2.new(0, 4.99, 0, 4.99)
+		line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
 		line.BackgroundColor3 = color
 		line.BorderSizePixel = 0
 		line.Parent = screengui
-		line.Name = "AimBot-Decal"
-		local clone = line:Clone()
-		clone.Parent = game.StarterGui:FindFirstChild("ScreenGui") or Instance.new("ScreenGui")
-		clone.Parent.Parent = game.StarterGui
+		line.Name = "FovOutLine"
 	end
+	screengui.Changed:Connect(function()
+		local radius = fov
+		local segments = fov*2
+		local increment = math.pi*2/segments
+		local points = {}
+		for i = 0, math.pi*2, increment do
+			local x = math.cos(i)*radius
+			local y = math.sin(i)*radius
+			table.insert(points, Vector2.new(x,y))
+		end
+		for _, GuiItem in screengui:GetDescendants() do
+			if GuiItem:IsA("Frame") and GuiItem.Name == "FovOutLine" then
+				GuiItem:Destroy()
+			end
+		end
+		for i = 1, #points do
+			local p1 = points[i]
+			local line = Instance.new("Frame")
+			line.Size = UDim2.new(0, 4.99, 0, 4.99)
+			line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
+			line.BackgroundColor3 = color
+			line.BorderSizePixel = 0
+			line.Parent = screengui
+			line.Name = "FovOutLine"
+		end
+	end)
 end
 
 function drawDot(color)
 	local dot = Instance.new("Frame")
 	dot.Size = UDim2.new(0, 5, 0, 5)
-	dot.Position = UDim2.new(0.5, 0, 0.4789, 0)
-	dot.AnchorPoint = Vector2.new(0.5,0.4789)
+	dot.Position = UDim2.new(0, mouse.X, 0, mouse.Y)
 	dot.BackgroundColor3 = color
 	dot.BorderSizePixel = 0
-	dot.Parent = Localplayer.PlayerGui.ScreenGui
-	dot.Name = "AimBot-Decal"
-	local clone = dot:Clone()
-	clone.Parent = game.StarterGui.ScreenGui
-
+	dot.Parent = screengui
+	dot.Name = "FovOutLine"
 end
 
-drawCircle(fov, CLR)
-drawDot(CLR)
+function drawMain(CLR)
+	local main = Instance.new("Frame")
+	main.Name = "main"
+	main.Size = UDim2.new(0.00, 276.00, 0.00, 383.00)
+	main.BorderColor3 = CLR
+	main.Position = UDim2.new(0.38, 0.00, 0.18, 0.00)
+	main.BackgroundColor3 = Color3.new(0.16, 0.16, 0.16)
+	main.Parent = screengui
 
-for _, player in game.Players:GetPlayers() do
-    if player == Localplayer then continue end
-	if player.Character then
-		esp(player.Character)
-	else
-		spawn(function()
-			player.CharacterAdded:Once(esp)
-		end)
+	local name = Instance.new("TextLabel")
+	name.Name = "name"
+	name.TextWrapped = true
+	name.TextScaled = true
+	name.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
+	name.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
+	name.TextSize = 20
+	name.Size = UDim2.new(0.85, 0.00, 0.07, 0.00)
+	name.BorderColor3 = CLR
+	name.Text = "Kritofer's hub"
+	name.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	name.Parent = main
+
+	local exit = Instance.new("TextButton")
+	exit.Name = "exit"
+	exit.BackgroundColor3 = Color3.new(0.55, 0.00, 0.00)
+	exit.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	exit.TextSize = 20
+	exit.Size = UDim2.new(0.00, 41.00, 0.07, 0.00)
+	exit.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	exit.BorderColor3 = CLR
+	exit.Text = "X"
+	exit.Position = UDim2.new(0.85, 0.00, 0.00, 0.00)
+	exit.Parent = main
+
+	local ENABLED = Instance.new("BoolValue")
+	ENABLED.Name = "ENABLED"
+	ENABLED.Value = true
+	ENABLED.Parent = main
+	
+	local FOVOUTLINE = Instance.new("BoolValue")
+	FOVOUTLINE.Name = "FOVOUTLINE"
+	FOVOUTLINE.Value = true
+	FOVOUTLINE.Parent = main
+	
+	local Enabled = Instance.new("TextButton")
+	Enabled.Name = "Enabled"
+	Enabled.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
+	Enabled.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	Enabled.TextSize = 14
+	Enabled.Size = UDim2.new(0.10, 0.00, 0.08, 0.00)
+	Enabled.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	Enabled.BorderColor3 = CLR
+	Enabled.Text = "✓"
+	Enabled.Position = UDim2.new(0.06, 0.00, 0.12, 0.00)
+	Enabled.Parent = main
+
+	local tagE = Instance.new("TextLabel")
+	tagE.Name = "tagE"
+	tagE.TextWrapped = true
+	tagE.TextScaled = true
+	tagE.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
+	tagE.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
+	tagE.TextSize = 14
+	tagE.Size = UDim2.new(6.99, 0.00, 0.97, 0.00)
+	tagE.BorderColor3 = CLR
+	tagE.Text = "Enabled"
+	tagE.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	tagE.Position = UDim2.new(1.70, 0.00, 0.00, 0.00)
+	tagE.Parent = Enabled
+
+	local FovOutline = Instance.new("TextButton")
+	FovOutline.Name = "FovOutline"
+	FovOutline.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
+	FovOutline.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	FovOutline.TextSize = 14
+	FovOutline.Size = UDim2.new(0.10, 0.00, 0.08, 0.00)
+	FovOutline.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	FovOutline.BorderColor3 = CLR
+	FovOutline.Text = "✓"
+	FovOutline.Position = UDim2.new(0.06, 0.00, 0.22, 0.00)
+	FovOutline.Parent = main
+
+	local tagFO = Instance.new("TextLabel")
+	tagFO.Name = "tagFO"
+	tagFO.TextWrapped = true
+	tagFO.TextScaled = true
+	tagFO.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
+	tagFO.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
+	tagFO.TextSize = 14
+	tagFO.Size = UDim2.new(6.99, 0.00, 0.98, 0.00)
+	tagFO.BorderColor3 = CLR
+	tagFO.Text = "FovOutline"
+	tagFO.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	tagFO.Position = UDim2.new(1.70, 0.00, 0.00, 0.00)
+	tagFO.Parent = FovOutline
+	ENABLED.Changed:Connect(function(newval)
+		if newval == true then
+			Enabled.Text = "✓"
+		else
+			Enabled.Text = "X"
+		end
+		enabledaim = newval
+	end)
+	FOVOUTLINE.Changed:Connect(function(newval)
+		if newval == true then
+			FovOutline.Text = "✓"
+		else
+			FovOutline.Text = "X"
+		end
+		fovoutline = newval
+	end)
+	Enabled.MouseButton1Click:Connect(function()
+		ENABLED.Value = not ENABLED.Value
+	end)
+	FovOutline.MouseButton1Click:Connect(function()
+		FOVOUTLINE.Value = not FOVOUTLINE.Value
+		for _, part in main.Parent:GetChildren() do
+			if part.Name == "FovOutLine" then
+				part.Visible = fovoutline
+			end
+		end
+	end)
+	exit.MouseButton1Click:Connect(function()
+		main:Destroy()
+	end)
+	local dragval
+	main.Draggable = true
+	main.Active = true
+end
+
+function gui()
+	drawCircle(fov, CLR)
+	drawDot(CLR)
+	drawMain(CLR)
+end
+
+function main()
+	for _, player in game.Players:GetPlayers() do
+		if player == Localplayer then continue end
+		if player.Character then
+			esp(player.Character)
+		else
+			spawn(function()
+				player.CharacterAdded:Once(esp)
+			end)
+		end
+		player.CharacterAdded:Connect(esp)
 	end
-	player.CharacterAdded:Connect(esp)
+
+	game.Players.PlayerAdded:Connect(function(player)
+		if player == Localplayer then return end
+		local char = player.Character or player.CharacterAdded:Wait()
+		esp(player.Character)
+		player.CharacterAdded:Connect(esp)
+	end)
+	
+	gui()
+	
+	mouse.Move:Connect(function()
+		local x = mouse.X
+		local y = mouse.Y
+		
+		for _, frame:Frame in screengui:GetChildren() do
+			if frame.Name == "FovOutLine" then
+				frame.Position = UDim2.new(frame.Position.X.Scale, x, frame.Position.Y.Scale, y)
+			end
+		end
+	end)
+	if not Localplayer.Character then
+		repeat wait() until Localplayer.Character
+	end
+	Localplayer.CharacterAdded:Connect(function()
+		for _, frame:Frame in screengui:GetChildren() do
+			if frame.Name == "FovOutLine" then
+				return
+			end
+		end
+		if not screengui:FindFirstChild("main") then
+			gui()
+		end
+	end)
 end
 
-game.Players.PlayerAdded:Connect(function(player)
-	if player == Localplayer then return end
-	local char = player.Character or player.CharacterAdded:Wait()
-	esp(player.Character)
-	player.CharacterAdded:Connect(esp)
-end)
+if enabledaim then
+	main()
+end
