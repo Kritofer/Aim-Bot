@@ -118,7 +118,7 @@ function drawCircle(fov, color)
 	for i = 1, #points do
 		local p1 = points[i]
 		local line = Instance.new("Frame")
-		line.Size = UDim2.new(0, 4.99, 0, 4.99)
+		line.Size = UDim2.new(0, 2.5, 0, 2.5)
 		line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
 		line.BackgroundColor3 = color
 		line.BorderSizePixel = 0
@@ -126,15 +126,6 @@ function drawCircle(fov, color)
 		line.Name = "FovOutLine"
 	end
 	screengui.Changed:Connect(function()
-		local radius = fov
-		local segments = fov*2
-		local increment = math.pi*2/segments
-		local points = {}
-		for i = 0, math.pi*2, increment do
-			local x = math.cos(i)*radius
-			local y = math.sin(i)*radius
-			table.insert(points, Vector2.new(x,y))
-		end
 		for _, GuiItem in screengui:GetDescendants() do
 			if GuiItem:IsA("Frame") and GuiItem.Name == "FovOutLine" then
 				GuiItem:Destroy()
@@ -143,7 +134,7 @@ function drawCircle(fov, color)
 		for i = 1, #points do
 			local p1 = points[i]
 			local line = Instance.new("Frame")
-			line.Size = UDim2.new(0, 4.99, 0, 4.99)
+			line.Size = UDim2.new(0, 2.5, 0, 2.5)
 			line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
 			line.BackgroundColor3 = color
 			line.BorderSizePixel = 0
