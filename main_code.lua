@@ -102,7 +102,7 @@ function esp(char: Model)
 	newpart.BorderColor3 = CLR
 	newpart.Transparency = 0.50
 	newpart.BackgroundColor3 = CLR
-	if Localplayer.Team ~= player.Team and Localplayer.Team ~= nil then newpart.Transparency = 1 end
+	if Localplayer.Team == player.Team and Localplayer.Team ~= nil then newpart.Transparency = 1 end
 end
 
 function drawCircle(fov, color)
