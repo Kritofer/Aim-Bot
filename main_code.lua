@@ -104,7 +104,7 @@ function esp(char: Model)
 	spawn(function()
 		while player.Character do
 			if Localplayer.Team == player.Team and Localplayer.Team ~= nil then newpart.Transparency = 1 else newpart.Transparency = 0.5 end
-			task.wait(0.1)
+			task.wait(2)
 		end
 	end)
 end
