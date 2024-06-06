@@ -77,6 +77,7 @@ end
 
 function esp(char: Model)
 	local player = game.Players:GetPlayerFromCharacter(char)
+	if Localplayer.Team ~= player.Team and Localplayer.Team ~= nil then return end
 	local newpart = Instance.new("Frame")
 	local gui = char:FindFirstChild("Esp-Decal") or Instance.new("BillboardGui")
 	for _, part in gui:GetChildren() do part:Destroy() end
@@ -97,9 +98,9 @@ function esp(char: Model)
 	newpart.Parent = gui
 	newpart.ZIndex = 9999
 	newpart.Size = UDim2.new(1,0,1,0)
-	newpart.BorderColor3 = player.TeamColor.Color
+	newpart.BorderColor3 = CLR
 	newpart.Transparency = 0.50
-	newpart.BackgroundColor3 = player.TeamColor.Color
+	newpart.BackgroundColor3 = CLR
 end
 
 function drawCircle(fov, color)
