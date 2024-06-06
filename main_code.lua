@@ -9,6 +9,7 @@ local CanAim = false
 local fov = 100
 local CLR = Color3.new(1,1,1)
 local max = 300
+local walkspeed = 23
 local shooting = {}
 local enabledaim = true
 local shootteam = false
@@ -26,6 +27,7 @@ else
 	screengui.Name = "ScreenGui"
 	screengui.Enabled = true
 end
+Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 
 RS.Heartbeat:Connect(function()
 	if CanAim and enabledaim then
@@ -79,6 +81,7 @@ function esp(char: Model)
 	local gui = char:FindFirstChild("Esp-Decal") or Instance.new("BillboardGui")
 	for _, part in gui:GetChildren() do part:Destroy() end
 	gui.Parent = char:FindFirstChild("Head") or char:WaitForChild("Head")
+	-- esp's the player's head --
 	gui.Name = "Esp-Decal"
 	gui.Size = UDim2.new(1,0,1,0)
 	gui.AlwaysOnTop = true
@@ -117,7 +120,8 @@ function drawCircle(fov, color)
 	for i = 1, #points do
 		local p1 = points[i]
 		local line = Instance.new("Frame")
-		line.Size = UDim2.new(0, 3, 0, 3)
+		local size = math.clamp((fov / 100)*3, 2.5, 5)
+		line.Size = UDim2.new(0, size, 0, size)
 		line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
 		line.BackgroundColor3 = color
 		line.BorderSizePixel = 0
@@ -133,7 +137,8 @@ function drawCircle(fov, color)
 		for i = 1, #points do
 			local p1 = points[i]
 			local line = Instance.new("Frame")
-			line.Size = UDim2.new(0, 3, 0, 3)
+			local size = math.clamp((fov / 100)*3, 2.5, 5)
+			line.Size = UDim2.new(0, size, 0, size)
 			line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
 			line.BackgroundColor3 = color
 			line.BorderSizePixel = 0
@@ -150,7 +155,7 @@ function drawDot(color)
 	dot.BackgroundColor3 = color
 	dot.BorderSizePixel = 0
 	dot.Parent = screengui
-	dot.Name = "FovOutLine"
+	dot.Name = "FovOutLine-Dot"
 end
 
 function drawMain(CLR)
@@ -248,6 +253,53 @@ function drawMain(CLR)
 	tagFO.TextColor3 = Color3.new(1.00, 1.00, 1.00)
 	tagFO.Position = UDim2.new(1.70, 0.00, 0.00, 0.00)
 	tagFO.Parent = FovOutline
+	
+	local FovChanger = Instance.new("Frame")
+	FovChanger.Name = "FovChanger"
+	FovChanger.Size = UDim2.new(0.00, 240.00, 0.00, 31.00)
+	FovChanger.BorderColor3 = CLR
+	FovChanger.Position = UDim2.new(0.06, 0.00, 0.33, 0.00)
+	FovChanger.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
+	FovChanger.Parent = main
+
+	local tagFC = Instance.new("TextLabel")
+	tagFC.Name = "tagFC"
+	tagFC.TextWrapped = true
+	tagFC.ZIndex = 2
+	tagFC.BorderSizePixel = 0
+	tagFC.TextScaled = true
+	tagFC.BackgroundColor3 = Color3.new(1.00, 1.00, 1.00)
+	tagFC.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
+	tagFC.TextSize = 14
+	tagFC.Size = UDim2.new(0.00, 75.00, 0.00, 34.00)
+	tagFC.BorderColor3 = Color3.new(0.00, 0.00, 0.00)
+	tagFC.Text = "Fov:"
+	tagFC.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	tagFC.BackgroundTransparency = 1
+	tagFC.Position = UDim2.new(0.00, 0.00, -0.11, 0.00)
+	tagFC.Parent = FovChanger
+
+	local FOV = Instance.new("NumberValue")
+	FOV.Name = "FOV"
+	FOV.Value = 100
+	FOV.Parent = FovChanger
+
+	local FovControl = Instance.new("TextBox")
+	FovControl.Name = "FovControl"
+	FovControl.TextWrapped = true
+	FovControl.BorderSizePixel = 0
+	FovControl.TextScaled = true
+	FovControl.BackgroundColor3 = Color3.new(1.00, 1.00, 1.00)
+	FovControl.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
+	FovControl.TextSize = 14
+	FovControl.Size = UDim2.new(0.00, 152.00, 0.00, 31.00)
+	FovControl.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	FovControl.BorderColor3 = Color3.new(0.00, 0.00, 0.00)
+	FovControl.Text = "100"
+	FovControl.BackgroundTransparency = 1
+	FovControl.Position = UDim2.new(0.28, 0.00, 0.00, 0.00)
+	FovControl.Parent = FovChanger
+
 	ENABLED.Changed:Connect(function(newval)
 		if newval == true then
 			Enabled.Text = "✓"
@@ -264,21 +316,36 @@ function drawMain(CLR)
 		end
 		fovoutline = newval
 	end)
+	FOV.Changed:Connect(function(new)
+		fov = new
+	end)
+	FovControl.FocusLost:Connect(function(enterpress)
+		if enterpress then
+			FOV.Value = math.clamp(tonumber(FovControl.Text), 10, 400)
+			FovControl.Text = tostring(FOV.Value)
+			drawCircle(fov, CLR)
+            drawDot(CLR)
+		end
+	end)
 	Enabled.MouseButton1Click:Connect(function()
 		ENABLED.Value = not ENABLED.Value
 	end)
 	FovOutline.MouseButton1Click:Connect(function()
 		FOVOUTLINE.Value = not FOVOUTLINE.Value
-		for _, part in main.Parent:GetChildren() do
-			if part.Name == "FovOutLine" then
+		for _, part in screengui:GetChildren() do
+			if part.Name == "FovOutLine" or part.Name == "FovOutLine-Dot" then
 				part.Visible = fovoutline
 			end
 		end
 	end)
 	exit.MouseButton1Click:Connect(function()
 		main:Destroy()
+		for _, part in screengui:GetChildren() do
+			if part.Name == "FovOutLine" or part.Name == "FovOutLine-Dot" then
+				part:Destroy()
+			end
+		end
 	end)
-	local dragval
 	main.Draggable = true
 	main.Active = true
 end
@@ -316,7 +383,7 @@ function main()
 		local y = mouse.Y
 		
 		for _, frame:Frame in screengui:GetChildren() do
-			if frame.Name == "FovOutLine" then
+			if frame.Name == "FovOutLine" or frame.Name == "FovOutLine-Dot" then
 				frame.Position = UDim2.new(frame.Position.X.Scale, x, frame.Position.Y.Scale, y)
 			end
 		end
@@ -333,6 +400,7 @@ function main()
 		if not screengui:FindFirstChild("main") then
 			gui()
 		end
+        Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 	end)
 end
 
