@@ -27,11 +27,13 @@ else
 	screengui.Name = "ScreenGui"
 	screengui.Enabled = true
 end
-Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 
 RS.Heartbeat:Connect(function()
-	if CanAim and enabledaim then
-		shootnearest()
+	if enabledaim then
+		if CanAim then
+			shootnearest()
+		end
+        	Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 	end
 end)
 
@@ -401,7 +403,6 @@ function main()
 		if not screengui:FindFirstChild("main") then
 			gui()
 		end
-        Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 	end)
 end
 
