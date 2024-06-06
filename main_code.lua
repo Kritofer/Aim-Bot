@@ -100,9 +100,8 @@ function esp(char: Model)
 	newpart.ZIndex = 9999
 	newpart.Size = UDim2.new(1,0,1,0)
 	newpart.BorderColor3 = CLR
-	newpart.Transparency = 0.50
 	newpart.BackgroundColor3 = CLR
-	if Localplayer.Team == player.Team and Localplayer.Team ~= nil then newpart.Transparency = 1 end
+	if Localplayer.Team == player.Team and Localplayer.Team ~= nil then newpart.Transparency = 1 else newpart.Transparency = 0.5 end
 end
 
 function drawCircle(fov, color)
