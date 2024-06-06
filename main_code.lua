@@ -33,7 +33,7 @@ RS.Heartbeat:Connect(function()
 		if CanAim then
 			shootnearest()
 		end
-        	Localplayer.Character.Humanoid.WalkSpeed = walkspeed
+		Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 	end
 end)
 
@@ -105,7 +105,7 @@ function esp(char: Model)
 		while player.Character do
 			if Localplayer.Team == player.Team and Localplayer.Team ~= nil then newpart.Transparency = 1 else newpart.Transparency = 0.5 end
 		end
-	end	
+	end)
 end
 
 function drawCircle(fov, color)
@@ -202,12 +202,12 @@ function drawMain(CLR)
 	ENABLED.Name = "ENABLED"
 	ENABLED.Value = true
 	ENABLED.Parent = main
-	
+
 	local FOVOUTLINE = Instance.new("BoolValue")
 	FOVOUTLINE.Name = "FOVOUTLINE"
 	FOVOUTLINE.Value = true
 	FOVOUTLINE.Parent = main
-	
+
 	local Enabled = Instance.new("TextButton")
 	Enabled.Name = "Enabled"
 	Enabled.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
@@ -259,7 +259,7 @@ function drawMain(CLR)
 	tagFO.TextColor3 = Color3.new(1.00, 1.00, 1.00)
 	tagFO.Position = UDim2.new(1.70, 0.00, 0.00, 0.00)
 	tagFO.Parent = FovOutline
-	
+
 	local FovChanger = Instance.new("Frame")
 	FovChanger.Name = "FovChanger"
 	FovChanger.Size = UDim2.new(0.00, 240.00, 0.00, 31.00)
@@ -330,7 +330,7 @@ function drawMain(CLR)
 			FOV.Value = math.clamp(tonumber(FovControl.Text), 10, 400)
 			FovControl.Text = tostring(FOV.Value)
 			drawCircle(fov, CLR)
-            drawDot(CLR)
+			drawDot(CLR)
 		end
 	end)
 	Enabled.MouseButton1Click:Connect(function()
@@ -381,13 +381,13 @@ function main()
 		esp(player.Character)
 		player.CharacterAdded:Connect(esp)
 	end)
-	
+
 	gui()
-	
+
 	mouse.Move:Connect(function()
 		local x = mouse.X
 		local y = mouse.Y
-		
+
 		for _, frame:Frame in screengui:GetChildren() do
 			if frame.Name == "FovOutLine" or frame.Name == "FovOutLine-Dot" then
 				frame.Position = UDim2.new(frame.Position.X.Scale, x, frame.Position.Y.Scale, y)
