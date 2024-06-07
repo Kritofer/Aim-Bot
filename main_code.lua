@@ -28,7 +28,7 @@ else
 	screengui.Enabled = true
 end
 
-RS.Heartbeat:Connect(function()
+RS.Stepped:Connect(function()
 	if enabledaim then
 		if CanAim then
 			shootnearest()
