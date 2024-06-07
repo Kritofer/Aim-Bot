@@ -33,8 +33,11 @@ RS.Stepped:Connect(function()
 		if CanAim then
 			shootnearest()
 		end
-		Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 	end
+end)
+
+RS.RenderStepped:Connect(function()
+	Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 end)
 
 function shootnearest()
