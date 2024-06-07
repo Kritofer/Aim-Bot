@@ -9,7 +9,7 @@ local CanAim = false
 local fov = 100
 local CLR = Color3.new(1,1,1)
 local max = 300
-local walkspeed = 30
+local walkspeed = 20
 local shooting = {}
 local enabledaim = true
 local shootteam = false
@@ -265,7 +265,7 @@ function drawMain(CLR)
 	FovChanger.Name = "FovChanger"
 	FovChanger.Size = UDim2.new(0.00, 240.00, 0.00, 31.00)
 	FovChanger.BorderColor3 = CLR
-	FovChanger.Position = UDim2.new(0.06, 0.00, 0.33, 0.00)
+	FovChanger.Position = UDim2.new(0.06, 0.00, 0.46, 0.00)
 	FovChanger.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
 	FovChanger.Parent = main
 
@@ -306,6 +306,52 @@ function drawMain(CLR)
 	FovControl.BackgroundTransparency = 1
 	FovControl.Position = UDim2.new(0.28, 0.00, 0.00, 0.00)
 	FovControl.Parent = FovChanger
+	
+	local WalkSpeedChanger = Instance.new("Frame")
+	WalkSpeedChanger.Name = "WalkSpeedChanger"
+	WalkSpeedChanger.Size = UDim2.new(0.00, 240.00, 0.00, 31.00)
+	WalkSpeedChanger.BorderColor3 = Color3.new(1.00, 1.00, 1.00)
+	WalkSpeedChanger.Position = UDim2.new(0.06, 0.00, 0.33, 0.00)
+	WalkSpeedChanger.BackgroundColor3 = Color3.new(0.24, 0.24, 0.24)
+	WalkSpeedChanger.Parent = main
+
+	local tagWSC = Instance.new("TextLabel")
+	tagWSC.Name = "tagWSC"
+	tagWSC.TextWrapped = true
+	tagWSC.ZIndex = 2
+	tagWSC.BorderSizePixel = 0
+	tagWSC.TextScaled = true
+	tagWSC.BackgroundColor3 = Color3.new(1.00, 1.00, 1.00)
+	tagWSC.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
+	tagWSC.TextSize = 14
+	tagWSC.Size = UDim2.new(0.00, 111.00, 0.00, 34.00)
+	tagWSC.BorderColor3 = Color3.new(0.00, 0.00, 0.00)
+	tagWSC.Text = "WalkSpeed:"
+	tagWSC.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	tagWSC.BackgroundTransparency = 1
+	tagWSC.Position = UDim2.new(0.00, 0.00, -0.11, 0.00)
+	tagWSC.Parent = WalkSpeedChanger
+
+	local WalkSpeed = Instance.new("NumberValue")
+	WalkSpeed.Name = "WalkSpeed"
+	WalkSpeed.Value = 20
+	WalkSpeed.Parent = WalkSpeedChanger
+
+	local WalkSpeedControl = Instance.new("TextBox")
+	WalkSpeedControl.Name = "WalkSpeedControl"
+	WalkSpeedControl.TextWrapped = true
+	WalkSpeedControl.BorderSizePixel = 0
+	WalkSpeedControl.TextScaled = true
+	WalkSpeedControl.BackgroundColor3 = Color3.new(1.00, 1.00, 1.00)
+	WalkSpeedControl.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Light, Enum.FontStyle.Normal)
+	WalkSpeedControl.TextSize = 14
+	WalkSpeedControl.Size = UDim2.new(0.00, 118.00, 0.00, 31.00)
+	WalkSpeedControl.TextColor3 = Color3.new(1.00, 1.00, 1.00)
+	WalkSpeedControl.BorderColor3 = Color3.new(0.00, 0.00, 0.00)
+	WalkSpeedControl.Text = ""
+	WalkSpeedControl.BackgroundTransparency = 1
+	WalkSpeedControl.Position = UDim2.new(0.51, 0.00, 0.00, 0.00)
+	WalkSpeedControl.Parent = WalkSpeedChanger
 
 	ENABLED.Changed:Connect(function(newval)
 		if newval == true then
@@ -325,6 +371,15 @@ function drawMain(CLR)
 	end)
 	FOV.Changed:Connect(function(new)
 		fov = new
+	end)
+	WalkSpeed.Changed:Connect(function(value: number) 
+		walkspeed = value
+	end)
+	WalkSpeedControl.FocusLost:Connect(function(enterpress)
+		if enterpress then
+			WalkSpeed.Value = math.clamp(tonumber(WalkSpeedControl.Text), 1, 100)
+			WalkSpeedControl.Text = tostring(WalkSpeed.Value)
+		end
 	end)
 	FovControl.FocusLost:Connect(function(enterpress)
 		if enterpress then
@@ -353,6 +408,7 @@ function drawMain(CLR)
 			end
 		end
 	end)
+	
 	main.Draggable = true
 	main.Active = true
 end
