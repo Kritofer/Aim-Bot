@@ -28,16 +28,51 @@ else
 	screengui.Enabled = true
 end
 
+function int(args: {any})
+	for _, item in args do
+		if typeof(item) == "boolean" then
+			if item then
+				return 1
+			else
+				return 0
+			end
+		end
+	end
+end
+
+keys = {
+	A = false,
+	S = false,
+	D = false,
+	W = false
+}
+
+UIS.InputBegan:Connect(function(key)
+	if key.KeyCode == Enum.KeyCode.A then keys.A = true end
+	if key.KeyCode == Enum.KeyCode.S then keys.S = true end
+	if key.KeyCode == Enum.KeyCode.D then keys.D = true end
+	if key.KeyCode == Enum.KeyCode.W then keys.W = true end
+end)
+
+UIS.InputEnded:Connect(function(key)
+	if key.KeyCode == Enum.KeyCode.A then keys.A = false end
+	if key.KeyCode == Enum.KeyCode.S then keys.S = false end
+	if key.KeyCode == Enum.KeyCode.D then keys.D = false end
+	if key.KeyCode == Enum.KeyCode.W then keys.W = false end
+end)
+
 RS.Stepped:Connect(function()
 	if enabledaim then
 		if CanAim then
 			shootnearest()
 		end
+		if Localplayer.Character.Humanoid:GetState() == Enum.HumanoidStateType.Jumping or Localplayer.Character.Humanoid:GetState() == Enum.HumanoidStateType.Freefall then return end
+		if keys.D or keys.A then
+			Localplayer.Character.HumanoidRootPart.Velocity += (Localplayer.Character.HumanoidRootPart.CFrame.RightVector * walkspeed) * (int({keys.D}) - int({keys.A}))
+		else
+			Localplayer.Character.HumanoidRootPart.Velocity += (Localplayer.Character.HumanoidRootPart.CFrame.LookVector * walkspeed) * (int({keys.W}) - int({keys.S}))
+		end
 	end
-end)
-
-RS.RenderStepped:Connect(function()
-	Localplayer.Character.Humanoid.WalkSpeed = walkspeed
 end)
 
 function shootnearest()
@@ -351,7 +386,7 @@ function drawMain(CLR)
 	WalkSpeedControl.Size = UDim2.new(0.00, 118.00, 0.00, 31.00)
 	WalkSpeedControl.TextColor3 = Color3.new(1.00, 1.00, 1.00)
 	WalkSpeedControl.BorderColor3 = Color3.new(0.00, 0.00, 0.00)
-	WalkSpeedControl.Text = ""
+	WalkSpeedControl.Text = "20"
 	WalkSpeedControl.BackgroundTransparency = 1
 	WalkSpeedControl.Position = UDim2.new(0.51, 0.00, 0.00, 0.00)
 	WalkSpeedControl.Parent = WalkSpeedChanger
@@ -380,8 +415,8 @@ function drawMain(CLR)
 	end)
 	WalkSpeedControl.FocusLost:Connect(function(enterpress)
 		if enterpress then
-			WalkSpeed.Value = math.clamp(tonumber(WalkSpeedControl.Text), 1, 100)
-			WalkSpeedControl.Text = tostring(WalkSpeed.Value)
+			WalkSpeed.Value = math.clamp(tonumber(WalkSpeedControl.Text), 20, 100) - 15
+			WalkSpeedControl.Text = tostring(WalkSpeed.Value + 15)
 		end
 	end)
 	FovControl.FocusLost:Connect(function(enterpress)
