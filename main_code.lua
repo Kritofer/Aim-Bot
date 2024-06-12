@@ -5,6 +5,7 @@ local UIS = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
 local mouse = Localplayer:GetMouse()
 local Camera = workspace.CurrentCamera
+local espying = false
 local CanAim = false
 local fov = 100
 local CLR = Color3.new(1,1,1)
@@ -458,24 +459,26 @@ function gui()
 end
 
 function main()
-	for _, player in game.Players:GetPlayers() do
-		if player == Localplayer then continue end
-		if player.Character then
-			esp(player.Character)
-		else
-			spawn(function()
-				player.CharacterAdded:Once(esp)
-			end)
+	if spying then
+		for _, player in game.Players:GetPlayers() do
+			if player == Localplayer then continue end
+			if player.Character then
+				esp(player.Character)
+			else
+				spawn(function()
+					player.CharacterAdded:Once(esp)
+				end)
+			end
+			player.CharacterAdded:Connect(esp)
 		end
-		player.CharacterAdded:Connect(esp)
-	end
 
-	game.Players.PlayerAdded:Connect(function(player)
-		if player == Localplayer then return end
-		local char = player.Character or player.CharacterAdded:Wait()
-		esp(player.Character)
-		player.CharacterAdded:Connect(esp)
-	end)
+		game.Players.PlayerAdded:Connect(function(player)
+			if player == Localplayer then return end
+			local char = player.Character or player.CharacterAdded:Wait()
+			esp(player.Character)
+			player.CharacterAdded:Connect(esp)
+		end)
+	end
 
 	gui()
 
