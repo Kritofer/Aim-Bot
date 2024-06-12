@@ -22,11 +22,9 @@ functions[1]()
 
 if Localplayer.PlayerGui:FindFirstChild("ScreenGui") then
 	screengui = Localplayer.PlayerGui:FindFirstChild("ScreenGui")
-	screengui.Enabled = true
 else
 	screengui = Instance.new("ScreenGui", Localplayer.PlayerGui)
 	screengui.Name = "ScreenGui"
-	screengui.Enabled = true
 end
 
 function int(args: {any})
