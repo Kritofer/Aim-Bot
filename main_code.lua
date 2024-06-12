@@ -459,7 +459,7 @@ function gui()
 end
 
 function main()
-	if spying then
+	if espying then
 		for _, player in game.Players:GetPlayers() do
 			if player == Localplayer then continue end
 			if player.Character then
