@@ -5,7 +5,7 @@ local UIS = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
 local mouse = Localplayer:GetMouse()
 local Camera = workspace.CurrentCamera
-local espying = false
+local espying = true
 local CanAim = false
 local fov = 100
 local CLR = Color3.new(1,1,1)
@@ -21,7 +21,7 @@ local offset = 35
 local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
 functions[1]()
 
-if Localplayer.PlayerGui:FindFirstChildOfClass("ScreenGui") then
+if Localplayer.PlayerGui:FindFirstChildOfClass("ScreenGui") and false then
 	screengui = Localplayer.PlayerGui:FindFirstChildOfClass("ScreenGui")
 else
 	screengui = Instance.new("ScreenGui", Localplayer.PlayerGui)
