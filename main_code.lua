@@ -209,6 +209,7 @@ function drawMain(CLR)
 	main.BorderColor3 = CLR
 	main.Position = UDim2.new(0.38, 0.00, 0.18, 0.00)
 	main.BackgroundColor3 = Color3.new(0.16, 0.16, 0.16)
+	main.ZIndex = 9998
 	main.Parent = screengui
 
 	local name = Instance.new("TextLabel")
