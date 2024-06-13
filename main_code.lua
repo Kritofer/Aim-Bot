@@ -20,11 +20,11 @@ local screengui = nil
 local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
 functions[1]()
 
-if Localplayer.PlayerGui:FindFirstChild("ScreenGui") then
-	screengui = Localplayer.PlayerGui:FindFirstChild("ScreenGui")
+if Localplayer.PlayerGui:FindFirstChildOfClass("ScreenGui") then
+	screengui = Localplayer.PlayerGui:FindFirstChildOfClass("ScreenGui")
 else
 	screengui = Instance.new("ScreenGui", Localplayer.PlayerGui)
-	screengui.Name = "ScreenGui"
+	screengui.Name = "AimBot-Kritofer"
 end
 
 function int(args: {any})
@@ -343,7 +343,7 @@ function drawMain(CLR)
 	FovControl.BackgroundTransparency = 1
 	FovControl.Position = UDim2.new(0.28, 0.00, 0.00, 0.00)
 	FovControl.Parent = FovChanger
-	
+
 	local WalkSpeedChanger = Instance.new("Frame")
 	WalkSpeedChanger.Name = "WalkSpeedChanger"
 	WalkSpeedChanger.Size = UDim2.new(0.00, 240.00, 0.00, 31.00)
@@ -445,7 +445,7 @@ function drawMain(CLR)
 			end
 		end
 	end)
-	
+
 	main.Draggable = true
 	main.Active = true
 end
