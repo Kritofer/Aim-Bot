@@ -17,6 +17,7 @@ local shootteam = false
 local advanced = false
 local fovoutline = true
 local screengui = nil
+local offset = 35
 local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
 functions[1]()
 
@@ -144,6 +145,20 @@ function esp(char: Model)
 			task.wait(2)
 		end
 	end)
+end
+
+function temp_esp(char: Model)
+	local player = game.Players:GetPlayerFromCharacter(char)
+	for _, frame in screengui do if frame.Name == "Esp-Temp" then frame:Destroy() end end
+	if not player then return end
+	if not char.Head then return end
+	local new = Instance.new("Frame")
+	new.Name = "Esp-Temp"
+	new.Size = UDim2.new(0, 10, 0, 10)
+	new.BorderColor3 = CLR
+	new.BackgroundColor3 = CLR
+	new.Parent = screengui
+	new.Position = UDim2.new(0, Camera:WorldToViewportPoint(char.Head.Position).X, 0, Camera:WorldToViewportPoint(char.Head.Position).Y)
 end
 
 function drawCircle(fov, color)
@@ -483,7 +498,7 @@ function main()
 
 	mouse.Move:Connect(function()
 		local x = mouse.X
-		local y = mouse.Y
+		local y = mouse.Y + offset
 
 		for _, frame:Frame in screengui:GetChildren() do
 			if frame.Name == "FovOutLine" or frame.Name == "FovOutLine-Dot" then
