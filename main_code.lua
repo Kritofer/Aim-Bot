@@ -1,3 +1,8 @@
+if AIM_LOADED then
+	return
+end
+pcall(function() getgenv().AIM_LOADED = true end)
+
 local wait, spawn = task.wait, task.spawn
 
 local Localplayer = game.Players.LocalPlayer
@@ -5,7 +10,8 @@ local UIS = game:GetService("UserInputService")
 local RS = game:GetService("RunService")
 local mouse = Localplayer:GetMouse()
 local Camera = workspace.CurrentCamera
-local espying = true
+local espying = false
+local spydown = 0.05
 local CanAim = false
 local fov = 100
 local CLR = Color3.new(1,1,1)
@@ -16,17 +22,11 @@ local enabledaim = true
 local shootteam = false
 local advanced = false
 local fovoutline = true
-local screengui = nil
-local offset = 35
+local screengui = game:GetService("CoreGui"):FindFirstChild("RobloxGui")
+local offset = 0
 local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
-functions[1]()
 
-if Localplayer.PlayerGui:FindFirstChildOfClass("ScreenGui") and false then
-	screengui = Localplayer.PlayerGui:FindFirstChildOfClass("ScreenGui")
-else
-	screengui = Instance.new("ScreenGui", Localplayer.PlayerGui)
-	screengui.Name = "AimBot-Kritofer"
-end
+functions[1]()
 
 function int(args: {any})
 	for _, item in args do
@@ -149,16 +149,20 @@ end
 
 function temp_esp(char: Model)
 	local player = game.Players:GetPlayerFromCharacter(char)
-	for _, frame in screengui do if frame.Name == "Esp-Temp" then frame:Destroy() end end
 	if not player then return end
 	if not char.Head then return end
 	local new = Instance.new("Frame")
+	local dist = (Localplayer.Character.Position - char.Position).Magnitude
 	new.Name = "Esp-Temp"
 	new.Size = UDim2.new(0, 10, 0, 10)
 	new.BorderColor3 = CLR
 	new.BackgroundColor3 = CLR
 	new.Parent = screengui
-	new.Position = UDim2.new(0, Camera:WorldToViewportPoint(char.Head.Position).X, 0, Camera:WorldToViewportPoint(char.Head.Position).Y)
+	new.ZIndex = 9999
+	new.Size = UDim2.fromOffset(100/dist, 100/dist)
+	new.Position = UDim2.new(0, Camera:WorldToScreenPoint(char.Head.Position).X, 0, Camera:WorldToScreenPoint(char.Head.Position).Y)
+	if Localplayer.Team == player.Team and Localplayer.Team ~= nil then new.Transparency = 1 else new.Transparency = 0.5 end
+	game.Debris:AddItem(new, spydown)
 end
 
 function drawCircle(fov, color)
@@ -224,7 +228,6 @@ function drawMain(CLR)
 	main.BorderColor3 = CLR
 	main.Position = UDim2.new(0.38, 0.00, 0.18, 0.00)
 	main.BackgroundColor3 = Color3.new(0.16, 0.16, 0.16)
-	main.ZIndex = 9998
 	main.Parent = screengui
 
 	local name = Instance.new("TextLabel")
@@ -492,6 +495,18 @@ function main()
 			esp(player.Character)
 			player.CharacterAdded:Connect(esp)
 		end)
+	else
+		for _, player in game.Players:GetPlayers() do
+			if player == Localplayer then continue end
+			if player.Character then
+				spawn(function()
+					while player.Character.Humanoid.Health > 0 do
+						temp_esp(player.Character)
+						wait(spydown)
+					end
+				end)
+			end
+		end
 	end
 
 	gui()
@@ -504,19 +519,6 @@ function main()
 			if frame.Name == "FovOutLine" or frame.Name == "FovOutLine-Dot" then
 				frame.Position = UDim2.new(frame.Position.X.Scale, x, frame.Position.Y.Scale, y)
 			end
-		end
-	end)
-	if not Localplayer.Character then
-		repeat wait() until Localplayer.Character
-	end
-	Localplayer.CharacterAdded:Connect(function()
-		for _, frame:Frame in screengui:GetChildren() do
-			if frame.Name == "FovOutLine" then
-				return
-			end
-		end
-		if not screengui:FindFirstChild("main") then
-			gui()
 		end
 	end)
 end
