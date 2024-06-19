@@ -22,7 +22,7 @@ local enabledaim = true
 local shootteam = false
 local advanced = false
 local fovoutline = true
-local screengui = game:GetService("CoreGui"):FindFirstChild("RobloxGui")
+local screengui = game:GetService("CoreGui"):FindFirstChild("RobloxGui") or Instance.new("ScreenGui", game:GetService("CoreGui"))
 local offset = 0
 local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
 
@@ -120,7 +120,7 @@ function esp(char: Model)
 	local newpart = Instance.new("Frame")
 	local gui = char:FindFirstChild("Esp-Decal") or Instance.new("BillboardGui")
 	for _, part in gui:GetChildren() do part:Destroy() end
-	gui.Parent = char:FindFirstChild("Head") or char:WaitForChild("Head")
+	gui.Parent = screengui
 	-- esp's the player's head --
 	gui.Name = "Esp-Decal"
 	gui.Size = UDim2.new(1,0,1,0)
