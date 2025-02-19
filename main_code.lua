@@ -105,7 +105,9 @@ function shootnearest()
 end
 
 function shoot(player: Player)
-	local lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position)
+	local mouseRay = Camera:ScreenPointToRay(mouse.X, mouse.Y)
+	local lookto = CFrame.lookAt(mouseRay.Origin, player.Character.Head.Position)
+	-- local lookto = CFrame.lookAt(Camera.CFrame.Position, player.Character.Head.Position)
 	if advanced then
 		local distance = ((Localplayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position) / (max * 1.2)).Magnitude / 2
 		local vel = (player.Character.HumanoidRootPart.Velocity * (0.20 + (Localplayer:GetNetworkPing() * (5 + distance))))
