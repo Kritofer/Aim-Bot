@@ -183,7 +183,7 @@ function drawCircle(fov, color)
 	for i = 1, #points do
 		local p1 = points[i]
 		local line = Instance.new("Frame")
-		local size = math.clamp((fov / 100)*3, 2.5, 5)
+		local size = math.clamp((fov / 80)*3, 2, 5)
 		line.Size = UDim2.new(0, size, 0, size)
 		line.Position = UDim2.new(p1.X/screengui.AbsoluteSize.X, mouse.X, p1.Y/screengui.AbsoluteSize.Y, mouse.Y)
 		line.BackgroundColor3 = color
