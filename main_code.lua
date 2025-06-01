@@ -24,7 +24,7 @@ local advanced = false
 local fovoutline = true
 local screengui = game:GetService("CoreGui"):FindFirstChild("RobloxGui") or Instance.new("ScreenGui", game:GetService("CoreGui"))
 local offset = 0
-local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 then CanAim = true shootnearest() end end)end}
+local functions = {function() UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton2 then CanAim = false end end) UIS.InputBegan:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton2 then CanAim = true shootnearest() end end)end}
 
 functions[1]()
 
