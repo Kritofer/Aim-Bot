@@ -61,7 +61,7 @@ UIS.InputEnded:Connect(function(key)
 	if key.KeyCode == Enum.KeyCode.W then keys.W = false end
 end)
 
-RS.Stepped:Connect(function()
+RS.RenderStepped:Connect(function()
 	if enabledaim then
 		if CanAim then
 			shootnearest()
