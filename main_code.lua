@@ -436,7 +436,7 @@ function drawMain(CLR)
 	end)
 	WalkSpeedControl.FocusLost:Connect(function(enterpress)
 		if enterpress then
-			WalkSpeed.Value = math.clamp(tonumber(WalkSpeedControl.Text), 0, 100) - 15
+			WalkSpeed.Value = math.clamp(tonumber(WalkSpeedControl.Text), 0, 100)
 			WalkSpeedControl.Text = WalkSpeed.Value
 		end
 	end)
