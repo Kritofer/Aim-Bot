@@ -393,7 +393,7 @@ function drawMain(CLR)
 
 	local WalkSpeed = Instance.new("NumberValue")
 	WalkSpeed.Name = "WalkSpeed"
-	WalkSpeed.Value = 20
+	WalkSpeed.Value = 0
 	WalkSpeed.Parent = WalkSpeedChanger
 
 	local WalkSpeedControl = Instance.new("TextBox")
@@ -407,7 +407,7 @@ function drawMain(CLR)
 	WalkSpeedControl.Size = UDim2.new(0.00, 118.00, 0.00, 31.00)
 	WalkSpeedControl.TextColor3 = Color3.new(1.00, 1.00, 1.00)
 	WalkSpeedControl.BorderColor3 = Color3.new(0.00, 0.00, 0.00)
-	WalkSpeedControl.Text = "20"
+	WalkSpeedControl.Text = "0"
 	WalkSpeedControl.BackgroundTransparency = 1
 	WalkSpeedControl.Position = UDim2.new(0.51, 0.00, 0.00, 0.00)
 	WalkSpeedControl.Parent = WalkSpeedChanger
