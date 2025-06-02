@@ -92,14 +92,14 @@ function shootnearest()
 		if shootteam then check = true end 
 		if distance < shortest and check then
 			if player.Character.Humanoid.Health == 0 then continue end
-			local ray = Ray.new(Camera.CFrame.Position, (player.Character.Head.Position - Camera.CFrame.Position).Unit * 200)
+			local ray = Ray.new(Camera.CFrame.Position, (player.Character.Head.Position - Camera.CFrame.Position).Unit * 2000)
 			local part = workspace:FindPartOnRayWithIgnoreList(ray, {Localplayer.Character})
 			if part and (part:IsDescendantOf(player.Character) or not part.CanCollide) then
 				shortest = distance
 			end
 		end
 	end
-	if shortest <= fov and shortest >= 0 then
+	if shortest >= 0 then --  shortest <= fov and 
 		shoot(shooting[shortest])
 	end
 end
